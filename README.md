@@ -62,8 +62,53 @@ npx hardhat compile
 
 ### Deployment
 
+#### Local Development Network
+
+Deploy to a local Hardhat network:
+
 ```bash
-npx hardhat run scripts/deploy.js --network <network>
+# Start local Hardhat network
+npx hardhat node
+
+# In another terminal, deploy the contract
+npx hardhat ignition deploy ignition/modules/SimpleSavings.ts --network local
+```
+
+#### Testnet Deployment (Sepolia)
+
+Deploy to Sepolia testnet:
+
+1. **Set up environment variables**:
+   Create a `.env` file in the project root:
+   ```bash
+   SEPOLIA_RPC_URL=https://sepolia.infura.io/v3/YOUR_INFURA_PROJECT_ID
+   SEPOLIA_PRIVATE_KEY=your_private_key_here
+   ```
+
+2. **Get testnet ETH**:
+   - Visit [Sepolia Faucet](https://sepoliafaucet.com/) to get test ETH
+   - Or use [Alchemy Faucet](https://sepoliafaucet.com/)
+
+3. **Deploy to Sepolia**:
+   ```bash
+   npx hardhat ignition deploy ignition/modules/SimpleSavings.ts --network sepolia
+   ```
+
+#### Other Networks
+
+The project is configured to support multiple networks:
+
+- **Hardhat Mainnet Simulation**: `--network hardhatMainnet`
+- **Hardhat Optimism Simulation**: `--network hardhatOp`
+- **Local Network**: `--network local`
+- **Sepolia Testnet**: `--network sepolia`
+
+#### Verification (Optional)
+
+After deployment, verify your contract on Etherscan:
+
+```bash
+npx hardhat verify --network sepolia <CONTRACT_ADDRESS>
 ```
 
 ## Project Structure

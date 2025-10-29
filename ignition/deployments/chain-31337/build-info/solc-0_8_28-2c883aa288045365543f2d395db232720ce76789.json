@@ -1,0 +1,39 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_28-2c883aa288045365543f2d395db232720ce76789",
+  "solcVersion": "0.8.28",
+  "solcLongVersion": "0.8.28+commit.7893614a",
+  "userSourceNameMap": {
+    "contracts/SimpleSavings.sol": "project/contracts/SimpleSavings.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "cancun",
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/SimpleSavings.sol": {
+        "content": "//SPDX-License-Identifier: MIT\r\n\r\npragma solidity ^0.8.0;\r\n\r\ncontract SimpleSavings {\r\n    address public owner;\r\n    mapping(address => uint256) public balances;\r\n    uint256 public totalDeposits;\r\n\r\n    constructor() {\r\n        owner = msg.sender;\r\n    }\r\n\r\n    event Deposited(address indexed user, uint256 amount, uint256 timestamp);\r\n    event Withdrawn(address indexed user, uint256 amount, uint256 timestamp);\r\n\r\n    modifier onlyOwner() {\r\n        require(msg.sender == owner, \"Only owner can call this function\");\r\n        _;\r\n    }\r\n\r\n    modifier validAmount(uint256 amount) {\r\n        require(amount > 0, \"Amount must be greater than 0\");\r\n        _;\r\n    }\r\n\r\n    function deposit() external payable validAmount(msg.value) {\r\n        balances[msg.sender] += msg.value;\r\n        totalDeposits += msg.value;\r\n        \r\n        emit Deposited(msg.sender, msg.value, block.timestamp);\r\n    }\r\n\r\n    function withdraw(uint256 amount) external validAmount(amount) {\r\n        balances[msg.sender] -= amount;\r\n        totalDeposits -= amount;\r\n\r\n        (bool success, ) = payable(msg.sender).call{value: amount}(\"\");\r\n\r\n        require(success, \"Transfer failed\");\r\n\r\n        emit Withdrawn(msg.sender, amount, block.timestamp);\r\n    }\r\n\r\n    function getBalance() public view returns (uint256) {\r\n        return balances[msg.sender];\r\n    }\r\n\r\n    function getContractBalance() public view returns (uint256) {\r\n        return address(this).balance;\r\n    }\r\n\r\n    function getTotalDeposits() public view returns (uint256) {\r\n        return totalDeposits;\r\n    }\r\n\r\n    function emergencyWithdraw() external onlyOwner {\r\n        uint256 contracBalance = address(this).balance;\r\n        \r\n        (bool success, ) = payable(owner).call{value: contracBalance}(\"\");\r\n\r\n        require(success, \"Transfer failed\");\r\n    }\r\n}\r\n"
+      }
+    }
+  }
+}
