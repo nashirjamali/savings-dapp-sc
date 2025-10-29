@@ -1,57 +1,94 @@
-# Sample Hardhat 3 Beta Project (`node:test` and `viem`)
+# Simple Savings DApp
 
-This project showcases a Hardhat 3 Beta project using the native Node.js test runner (`node:test`) and the `viem` library for Ethereum interactions.
+A decentralized savings application built with Solidity and Hardhat, allowing users to deposit and withdraw ETH with event tracking.
 
-To learn more about the Hardhat 3 Beta, please visit the [Getting Started guide](https://hardhat.org/docs/getting-started#getting-started-with-hardhat-3). To share your feedback, join our [Hardhat 3 Beta](https://hardhat.org/hardhat3-beta-telegram-group) Telegram group or [open an issue](https://github.com/NomicFoundation/hardhat/issues/new) in our GitHub issue tracker.
+## Features
 
-## Project Overview
+- **Deposit ETH**: Users can deposit ETH to their savings account
+- **Withdraw ETH**: Users can withdraw their deposited funds
+- **Balance Tracking**: Track individual user balances and total contract deposits
+- **Event Logging**: All transactions are logged with events for transparency
+- **Owner Controls**: Emergency withdrawal functionality for contract owner
 
-This example project includes:
+## Smart Contract
 
-- A simple Hardhat configuration file.
-- Foundry-compatible Solidity unit tests.
-- TypeScript integration tests using [`node:test`](nodejs.org/api/test.html), the new Node.js native test runner, and [`viem`](https://viem.sh/).
-- Examples demonstrating how to connect to different types of networks, including locally simulating OP mainnet.
+### SimpleSavings Contract
 
-## Usage
+The main contract provides the following functionality:
 
-### Running Tests
+- `deposit()`: Deposit ETH to your savings account
+- `withdraw(uint256 amount)`: Withdraw specified amount from your savings
+- `getBalance()`: Get your current balance
+- `getContractBalance()`: Get total contract balance
+- `getTotalDeposits()`: Get total deposits across all users
+- `emergencyWithdraw()`: Owner-only emergency withdrawal function
 
-To run all the tests in the project, execute the following command:
+### Events
 
-```shell
+- `Deposited(address indexed user, uint256 amount, uint256 timestamp)`
+- `Withdrawn(address indexed user, uint256 amount, uint256 timestamp)`
+
+## Development
+
+### Prerequisites
+
+- Node.js
+- npm or yarn
+
+### Installation
+
+```bash
+npm install
+```
+
+### Testing
+
+Run the test suite using viem assertions:
+
+```bash
 npx hardhat test
 ```
 
-You can also selectively run the Solidity or `node:test` tests:
+The tests include:
+- Deposit functionality with event verification
+- Withdraw functionality with event verification
+- Balance tracking validation
 
-```shell
-npx hardhat test solidity
-npx hardhat test nodejs
+### Compilation
+
+```bash
+npx hardhat compile
 ```
 
-### Make a deployment to Sepolia
+### Deployment
 
-This project includes an example Ignition module to deploy the contract. You can deploy this module to a locally simulated chain or to Sepolia.
-
-To run the deployment to a local chain:
-
-```shell
-npx hardhat ignition deploy ignition/modules/Counter.ts
+```bash
+npx hardhat run scripts/deploy.js --network <network>
 ```
 
-To run the deployment to Sepolia, you need an account with funds to send the transaction. The provided Hardhat configuration includes a Configuration Variable called `SEPOLIA_PRIVATE_KEY`, which you can use to set the private key of the account you want to use.
+## Project Structure
 
-You can set the `SEPOLIA_PRIVATE_KEY` variable using the `hardhat-keystore` plugin or by setting it as an environment variable.
-
-To set the `SEPOLIA_PRIVATE_KEY` config variable using `hardhat-keystore`:
-
-```shell
-npx hardhat keystore set SEPOLIA_PRIVATE_KEY
+```
+├── contracts/
+│   └── SimpleSavings.sol          # Main smart contract
+├── test/
+│   └── SimpleSavings.ts           # Test suite with viem assertions
+├── scripts/
+│   └── send-op-tx.ts              # Transaction scripts
+├── ignition/
+│   └── modules/
+│       └── Counter.ts             # Deployment module
+├── hardhat.config.ts              # Hardhat configuration
+└── package.json                   # Dependencies and scripts
 ```
 
-After setting the variable, you can run the deployment with the Sepolia network:
+## Security Features
 
-```shell
-npx hardhat ignition deploy --network sepolia ignition/modules/Counter.ts
-```
+- **Access Control**: Owner-only emergency functions
+- **Input Validation**: Amount validation for deposits and withdrawals
+- **Safe Transfers**: Proper ETH transfer handling with success checks
+- **Event Logging**: Complete transaction history for auditability
+
+## License
+
+MIT License
